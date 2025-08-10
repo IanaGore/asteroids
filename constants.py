@@ -14,3 +14,8 @@ PLAYER_SHOOT_COOLDOWN = 0.3  # seconds
 PLAYER_SHOOT_SPEED = 500
 
 SHOT_RADIUS = 5
+
+# Scoring constants
+ASTEROID_POINTS_LARGE = 20   # 60px radius
+ASTEROID_POINTS_MEDIUM = 50  # 40px radius  
+ASTEROID_POINTS_SMALL = 100  # 20px radius

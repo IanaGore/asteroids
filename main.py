@@ -5,6 +5,7 @@ from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
+from score import Score
 
 
 def main():
@@ -25,30 +26,45 @@ def main():
     Player.containers = (updatable, drawable)
 
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+    score = Score()
 
     dt = 0
+    game_over = False
 
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_r and game_over:
+                # Restart game
+                return main()
 
-        updatable.update(dt)
+        if not game_over:
+            updatable.update(dt)
 
-        for asteroid in asteroids:
-            if asteroid.collides_with(player):
-                print("Game over!")
-                sys.exit()
+            for asteroid in asteroids:
+                if asteroid.collides_with(player):
+                    game_over = True
+                    score.update_high_score()
 
-            for shot in shots:
-                if asteroid.collides_with(shot):
-                    shot.kill()
-                    asteroid.split()
+                for shot in shots:
+                    if asteroid.collides_with(shot):
+                        shot.kill()
+                        points = asteroid.split()
+                        score.add_points(points)
 
         screen.fill("black")
 
-        for obj in drawable:
-            obj.draw(screen)
+        if not game_over:
+            for obj in drawable:
+                obj.draw(screen)
+            score.draw(screen)
+        else:
+            score.draw_game_over(screen)
+            restart_font = pygame.font.Font(None, 36)
+            restart_text = restart_font.render("Press R to Restart", True, "white")
+            restart_rect = restart_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 120))
+            screen.blit(restart_text, restart_rect)
 
         pygame.display.flip()
 
